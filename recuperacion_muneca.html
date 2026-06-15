@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Hugo · Recuperación Muñeca</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#ffffff;--bg2:#f7f6f2;--bg3:#f0ede6;
+  --text:#1a1a18;--text2:#6b6b67;--text3:#9e9e99;
+  --teal:#0F6E56;--teal-l:#E1F5EE;--teal-m:#1D9E75;
+  --amber:#BA7517;--amber-l:#FAEEDA;--amber-m:#EF9F27;
+  --red:#A32D2D;--red-l:#FCEBEB;
+  --blue:#185FA5;--blue-l:#E6F1FB;--blue-m:#378ADD;
+  --green:#3B6D11;--green-l:#EAF3DE;
+  --gray:#5F5E5A;--gray-l:#F1EFE8;
+  --border:rgba(0,0,0,0.1);
+  --r:10px;--r2:14px;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;line-height:1.5;max-width:430px;margin:0 auto;padding-bottom:80px}
+
+/* NAV */
+nav{position:sticky;top:0;background:var(--bg);border-bottom:0.5px solid var(--border);z-index:100;padding:0}
+.nav-tabs{display:flex;overflow-x:auto;scrollbar-width:none;gap:0}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tab-btn{flex:none;padding:12px 16px;font-size:13px;font-weight:500;color:var(--text2);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.tab-btn.active{color:var(--teal);border-bottom-color:var(--teal)}
+
+/* HEADER */
+.app-header{padding:16px 16px 8px;background:var(--bg)}
+.app-header h1{font-size:20px;font-weight:500;color:var(--text)}
+.app-header p{font-size:13px;color:var(--text2);margin-top:2px}
+
+/* WEEK NAV */
+.week-nav{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--bg2);border-bottom:0.5px solid var(--border)}
+.week-nav button{background:none;border:0.5px solid var(--border);border-radius:var(--r);padding:6px 14px;font-size:13px;color:var(--text2);cursor:pointer}
+.week-nav button:active{background:var(--bg3)}
+.week-label{font-size:14px;font-weight:500;color:var(--text)}
+
+/* DAY PILLS */
+.day-strip{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none;background:var(--bg)}
+.day-strip::-webkit-scrollbar{display:none}
+.day-pill{flex:none;display:flex;flex-direction:column;align-items:center;padding:8px 10px;border-radius:var(--r);border:0.5px solid var(--border);cursor:pointer;min-width:44px;background:var(--bg)}
+.day-pill.active{background:var(--teal);border-color:var(--teal)}
+.day-pill span:first-child{font-size:10px;font-weight:500;color:var(--text2);text-transform:uppercase}
+.day-pill span:last-child{font-size:16px;font-weight:500;color:var(--text);margin-top:2px}
+.day-pill.active span:first-child,.day-pill.active span:last-child{color:#fff}
+
+/* SECTIONS */
+.section{padding:16px}
+.section+.section{padding-top:0}
+.section-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px}
+
+/* CARD */
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px}
+.card-title{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:8px}
+
+/* MEAL BLOCK */
+.meal-row{display:flex;gap:10px;margin-bottom:6px;align-items:flex-start}
+.meal-time{font-size:11px;font-weight:500;color:var(--text3);min-width:38px;padding-top:2px}
+.meal-badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:6px;margin-right:4px;margin-bottom:4px}
+.badge-food{background:var(--teal-l);color:var(--teal)}
+.badge-med{background:var(--red-l);color:var(--red)}
+.badge-sup{background:var(--blue-l);color:var(--blue)}
+.badge-water{background:var(--teal-l);color:var(--teal-m)}
+.meal-text{font-size:14px;color:var(--text);flex:1;line-height:1.4}
+
+/* ALARM */
+.alarm-card{background:var(--red-l);border:0.5px solid #F7C1C1;border-radius:var(--r2);padding:14px 16px;margin-bottom:10px}
+.alarm-title{font-size:13px;font-weight:500;color:var(--red);margin-bottom:6px}
+.alarm-item{font-size:13px;color:#791F1F;padding:3px 0;display:flex;gap:6px}
+
+/* PROGRESS */
+.prog-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.prog-card{background:var(--bg2);border-radius:var(--r);padding:10px 12px}
+.prog-label{font-size:11px;color:var(--text3)}
+.prog-val{font-size:20px;font-weight:500;color:var(--text);margin-top:2px}
+.prog-unit{font-size:12px;font-weight:400;color:var(--text2)}
+.prog-delta{font-size:11px;margin-top:2px}
+.prog-down{color:var(--teal)}
+.prog-up{color:var(--red)}
+
+/* FORM */
+label{display:block;font-size:13px;color:var(--text2);margin-bottom:4px;margin-top:10px}
+input[type=number],input[type=text]{width:100%;border:0.5px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:15px;background:var(--bg);color:var(--text)}
+input[type=number]:focus,input[type=text]:focus{outline:none;border-color:var(--teal)}
+.btn{width:100%;padding:12px;border-radius:var(--r);border:0.5px solid var(--border);font-size:14px;font-weight:500;background:var(--teal);color:#fff;cursor:pointer;margin-top:14px}
+.btn:active{opacity:.85}
+.btn-ghost{background:var(--bg);color:var(--teal);border-color:var(--teal)}
+
+/* CHART */
+.chart-wrap{overflow-x:auto;margin-top:10px}
+.chart-svg{min-width:260px;width:100%;height:140px}
+
+/* GROCERY */
+.grocery-cat{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);padding:10px 0 4px}
+.grocery-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.grocery-item:last-child{border-bottom:none}
+.grocery-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--teal);flex-shrink:0}
+.grocery-name{flex:1;font-size:14px;color:var(--text)}
+.grocery-name.checked{text-decoration:line-through;color:var(--text3)}
+.grocery-qty{font-size:12px;color:var(--text3)}
+.stock-btn{background:none;border:0.5px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--red);cursor:pointer}
+.stock-btn.ok{color:var(--teal);border-color:var(--teal-m)}
+
+/* TABS CONTENT */
+.view{display:none}
+.view.active{display:block}
+
+/* PHASE TAG */
+.phase-tag{display:inline-flex;align-items:center;gap:4px;background:var(--amber-l);color:var(--amber);font-size:11px;font-weight:500;padding:3px 10px;border-radius:6px;margin-bottom:12px}
+
+/* ALARM FLOAT */
+.alarm-float{background:var(--red-l);border:0.5px solid #F7C1C1;border-left:3px solid var(--red);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;font-size:13px;color:var(--red)}
+
+/* PROGRESS TABLE */
+.prog-table{width:100%;font-size:13px;border-collapse:collapse;margin-top:8px}
+.prog-table th{font-size:11px;font-weight:500;color:var(--text3);text-align:left;padding:4px 6px;border-bottom:0.5px solid var(--border)}
+.prog-table td{padding:8px 6px;border-bottom:0.5px solid var(--border);color:var(--text)}
+.prog-table tr:last-child td{border-bottom:none}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:0.5px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 12px;z-index:100;max-width:430px;margin:0 auto}
+.bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;padding:4px 12px;color:var(--text3);font-size:10px}
+.bnav-btn i{font-size:22px}
+.bnav-btn.active{color:var(--teal)}
+
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:var(--r2);font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>Recuperación Muñeca <i class="ti ti-heart-handshake" aria-hidden="true" style="color:var(--teal);font-size:18px;vertical-align:-2px"></i></h1>
+  <p>Hugo · Radio distal izquierdo · 15 jun – 12 jul 2026</p>
+</header>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bnav-btn active" onclick="showView('plan')" id="bnav-plan"><i class="ti ti-salad" aria-hidden="true"></i>Plan</button>
+  <button class="bnav-btn" onclick="showView('grocery')" id="bnav-grocery"><i class="ti ti-shopping-cart" aria-hidden="true"></i>Súper</button>
+  <button class="bnav-btn" onclick="showView('meds')" id="bnav-meds"><i class="ti ti-pill" aria-hidden="true"></i>Meds</button>
+  <button class="bnav-btn" onclick="showView('progress')" id="bnav-progress"><i class="ti ti-chart-line" aria-hidden="true"></i>Evolución</button>
+</nav>
+
+<!-- ===== VIEW: PLAN ===== -->
+<div class="view active" id="view-plan">
+  <div class="week-nav">
+    <button onclick="changeWeek(-1)"><i class="ti ti-chevron-left" aria-hidden="true"></i> Antes</button>
+    <span class="week-label" id="week-label">Semana 1 · 15–21 jun</span>
+    <button onclick="changeWeek(1)">Siguiente <i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+  </div>
+  <div class="day-strip" id="day-strip"></div>
+  <div class="section" id="day-content"></div>
+</div>
+
+<!-- ===== VIEW: GROCERY ===== -->
+<div class="view" id="view-grocery">
+  <div class="week-nav">
+    <button onclick="changeWeekGrocery(-1)"><i class="ti ti-chevron-left" aria-hidden="true"></i> Antes</button>
+    <span class="week-label" id="grocery-week-label">Súper · Semana 1</span>
+    <button onclick="changeWeekGrocery(1)">Siguiente <i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+  </div>
+  <div class="section">
+    <div class="phase-tag"><i class="ti ti-clock" aria-hidden="true"></i> Semana 1 · 15–21 jun</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="btn btn-ghost" style="width:auto;padding:8px 14px;font-size:13px;margin-top:0" onclick="clearGrocery()"><i class="ti ti-refresh" aria-hidden="true"></i> Limpiar</button>
+      <button class="btn" style="width:auto;padding:8px 14px;font-size:13px;margin-top:0;flex:1" onclick="markLow()"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Ver lo que falta</button>
+    </div>
+    <div id="grocery-list"></div>
+  </div>
+</div>
+
+<!-- ===== VIEW: MEDS ===== -->
+<div class="view" id="view-meds">
+  <div class="section">
+    <div class="section-title">Horario fijo de medicamentos</div>
+    
+    <div class="alarm-float"><strong>⚠️ Etoricoxib:</strong> La receta indica mañana, lo estás tomando a las 22h. Confirma horario con el cirujano antes de cambiar.</div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:var(--teal-l);border-radius:8px;padding:8px;"><i class="ti ti-clock" style="font-size:20px;color:var(--teal)" aria-hidden="true"></i></div>
+        <div><div style="font-size:15px;font-weight:500">05:30 – 06:00</div><div style="font-size:12px;color:var(--text2)">Al despertar</div></div>
+      </div>
+      <span class="meal-badge badge-med">Esomeprazol</span>
+      <div style="font-size:13px;color:var(--text2);margin-top:6px">Con agua, en ayuno. Esperar ~30 min antes del desayuno.</div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:var(--amber-l);border-radius:8px;padding:8px;"><i class="ti ti-clock" style="font-size:20px;color:var(--amber)" aria-hidden="true"></i></div>
+        <div><div style="font-size:15px;font-weight:500">06:00</div><div style="font-size:12px;color:var(--text2)">Desayuno</div></div>
+      </div>
+      <span class="meal-badge badge-med">Keflex</span>
+      <span class="meal-badge badge-med">Tafirol</span>
+      <span class="meal-badge badge-sup">Creatina 5g</span>
+      <div style="font-size:13px;color:var(--text2);margin-top:6px">Con el desayuno completo y suficiente agua.</div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:var(--blue-l);border-radius:8px;padding:8px;"><i class="ti ti-clock" style="font-size:20px;color:var(--blue)" aria-hidden="true"></i></div>
+        <div><div style="font-size:15px;font-weight:500">14:00</div><div style="font-size:12px;color:var(--text2)">Comida</div></div>
+      </div>
+      <span class="meal-badge badge-med">Keflex</span>
+      <span class="meal-badge badge-med">Tafirol</span>
+      <div style="font-size:13px;color:var(--text2);margin-top:6px">Con la comida principal.</div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:var(--gray-l);border-radius:8px;padding:8px;"><i class="ti ti-clock" style="font-size:20px;color:var(--gray)" aria-hidden="true"></i></div>
+        <div><div style="font-size:15px;font-weight:500">22:00</div><div style="font-size:12px;color:var(--text2)">Noche</div></div>
+      </div>
+      <span class="meal-badge badge-med">Keflex</span>
+      <span class="meal-badge badge-med">Tafirol</span>
+      <span class="meal-badge badge-med">Etoricoxib*</span>
+      <span class="meal-badge badge-sup">Magnesio 200–300mg</span>
+      <div style="font-size:13px;color:var(--text2);margin-top:6px">Con cena. *Confirmar horario con cirujano. Ketorolaco solo como rescate.</div>
+    </div>
+
+    <div class="section-title" style="margin-top:16px">Suplementos activos</div>
+    <div class="card">
+      <div class="meal-row"><div class="meal-time">✅</div><div class="meal-text"><strong>ISO100</strong> – ½–1 scoop según proteína del día (desayuno o cena)</div></div>
+      <div class="meal-row"><div class="meal-time">✅</div><div class="meal-text"><strong>Creatina</strong> – 5g con desayuno, sin fase de carga</div></div>
+      <div class="meal-row"><div class="meal-time">✅</div><div class="meal-text"><strong>Glicinato Mg</strong> – 200–300mg de Mg elemental por la noche</div></div>
+      <div class="meal-row"><div class="meal-time">⏸️</div><div class="meal-text"><strong>Omega-3</strong> – Pausar hasta autorización médica (posoperatorio + AINEs)</div></div>
+      <div class="meal-row"><div class="meal-time">🚫</div><div class="meal-text"><strong>EAA+ / Glutamina / CLA</strong> – Suspender, no aportan ventaja con 150g de proteína</div></div>
+      <div class="meal-row"><div class="meal-time">🚫</div><div class="meal-text"><strong>Emulsión de Scott</strong> – No comprar; puede duplicar A/D/omega-3</div></div>
+    </div>
+
+    <div class="section-title" style="margin-top:16px">Hidratación</div>
+    <div class="card">
+      <div style="font-size:32px;font-weight:500;color:var(--teal)">2.5 – 2.8 L <span style="font-size:16px;font-weight:400;color:var(--text2)">/ día</span></div>
+      <div style="font-size:13px;color:var(--text2);margin-top:6px">Orina amarillo pálido como referencia. Más si hay calor o mayor actividad. <strong>Importante con AINEs.</strong></div>
+    </div>
+
+    <div class="section-title" style="margin-top:16px">No agregar por cuenta propia</div>
+    <div class="alarm-card">
+      <div class="alarm-title"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Prohibido sin indicación</div>
+      <div class="alarm-item">⛔ Ibuprofeno, naproxeno, diclofenaco, aspirina</div>
+      <div class="alarm-item">⛔ Fat burners / termogénicos / pre-entrenos fuertes</div>
+      <div class="alarm-item">⛔ Ayunos, OMAD, cetosis extrema, 1500 kcal</div>
+      <div class="alarm-item">⛔ Megadosis vitamina A, D, zinc, calcio</div>
+      <div class="alarm-item">⛔ Glicinato + citrato de Mg el mismo día</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VIEW: PROGRESS ===== -->
+<div class="view" id="view-progress">
+  <div class="section">
+    <div class="section-title">Registro semanal · domingo al despertar</div>
+    
+    <div class="prog-grid">
+      <div class="prog-card">
+        <div class="prog-label">Peso inicial</div>
+        <div class="prog-val">73.95 <span class="prog-unit">kg</span></div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-label">Abdomen inicial</div>
+        <div class="prog-val">97.3 <span class="prog-unit">cm</span></div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-label">Cintura inicial</div>
+        <div class="prog-val">93.2 <span class="prog-unit">cm</span></div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-label">Grasa RENPHO</div>
+        <div class="prog-val">15.5 <span class="prog-unit">%</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-pencil" aria-hidden="true"></i> Nueva medición</div>
+      <label>Semana</label>
+      <select id="meas-week" style="width:100%;border:0.5px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:15px;background:var(--bg);color:var(--text)">
+        <option value="0">Semana 1 · 21 jun</option>
+        <option value="1">Semana 2 · 28 jun</option>
+        <option value="2">Semana 3 · 5 jul</option>
+        <option value="3">Semana 4 · 12 jul</option>
+      </select>
+      <label>Peso (kg)</label>
+      <input type="number" id="meas-peso" step="0.1" placeholder="ej. 73.5">
+      <label>Cintura (cm)</label>
+      <input type="number" id="meas-cintura" step="0.1" placeholder="ej. 92.0">
+      <label>Abdomen (cm)</label>
+      <input type="number" id="meas-abdomen" step="0.1" placeholder="ej. 96.5">
+      <label>Dolor 0–10</label>
+      <input type="number" id="meas-dolor" min="0" max="10" step="1" placeholder="0 = sin dolor">
+      <label>Notas</label>
+      <input type="text" id="meas-notas" placeholder="Estado herida, sueño, energía...">
+      <button class="btn" onclick="saveMeasurement()"><i class="ti ti-device-floppy" aria-hidden="true"></i> Guardar medición</button>
+    </div>
+
+    <div class="section-title" style="margin-top:16px">Historial</div>
+    <div id="meas-history"></div>
+
+    <div class="section-title" style="margin-top:16px">Peso · tendencia</div>
+    <div class="chart-wrap">
+      <svg class="chart-svg" id="weight-chart" viewBox="0 0 320 140"></svg>
+    </div>
+
+    <div class="section-title" style="margin-top:16px">Reglas de ajuste</div>
+    <div class="card">
+      <div class="meal-row"><span style="color:var(--teal)">↓ &gt;0.5kg/sem</span><span style="flex:1;padding-left:8px;font-size:13px;color:var(--text2)">Aumentar 100–150 kcal</span></div>
+      <div class="meal-row"><span style="color:var(--red)">😓 Debilidad</span><span style="flex:1;padding-left:8px;font-size:13px;color:var(--text2)">Aumentar 100 kcal</span></div>
+      <div class="meal-row"><span style="color:var(--amber)">— Sin cambio</span><span style="flex:1;padding-left:8px;font-size:13px;color:var(--text2)">2 semanas estable + ok → reducir 100 kcal</span></div>
+      <div class="meal-row"><span style="color:var(--red)">🚨 Herida mal</span><span style="flex:1;padding-left:8px;font-size:13px;color:var(--text2)">Suspender déficit, contactar médico</span></div>
+    </div>
+
+    <div class="section-title" style="margin-top:16px">Señales de alarma · ir al médico</div>
+    <div class="alarm-card">
+      <div class="alarm-title"><i class="ti ti-stethoscope" aria-hidden="true"></i> Buscar atención si aparece</div>
+      <div class="alarm-item">🔵 Dedos fríos, pálidos, morados o adormecidos</div>
+      <div class="alarm-item">📈 Dolor que aumenta en vez de estabilizarse</div>
+      <div class="alarm-item">🌡️ Fiebre, pus, mal olor, enrojecimiento que crece</div>
+      <div class="alarm-item">🦵 Dolor de pantorrilla, falta de aire o dolor torácico</div>
+      <div class="alarm-item">🩸 Vómito, evacuaciones negras usando AINEs</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const WEEKS = [
+  {label:'Semana 1 · 15–21 jun', range:'15-21 jun', phase:'Cicatrización y estabilidad', kcal:'1,950–2,000', prot:'150g', carb:'185–195g', fat:'65–70g'},
+  {label:'Semana 2 · 22–28 jun', range:'22-28 jun', phase:'Déficit pequeño (si evoluciona bien)', kcal:'1,875–1,925', prot:'150g', carb:'165–175g', fat:'65–70g'},
+  {label:'Semana 3 · 29 jun–5 jul', range:'29 jun-5 jul', phase:'Pérdida gradual de grasa', kcal:'1,800–1,850', prot:'145–155g', carb:'145–160g', fat:'65–70g'},
+  {label:'Semana 4 · 6–12 jul', range:'6-12 jul', phase:'Consolidar rutina', kcal:'1,800–1,850', prot:'145–155g', carb:'145–160g', fat:'65–70g'},
+];
+
+const DAYS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+const MENU = [
+  // Semana 1
+  [
+    {desayuno:'Oikos Pro 220g + ½ scoop ISO100 + 30g avena + ½ plátano + creatina', colacion:'200g cottage + 1 manzana', comida:'170g pollo + 150g arroz + 100g frijol + 250g verduras + 10g aceite', cena:'2 huevos + 180g claras + 3 tortillas + nopales + 50g aguacate'},
+    {desayuno:'Desayuno base fijo', colacion:'200g yogurt griego + frutos rojos', comida:'170g carne magra + 300g papa + ensalada grande + 10g aceite', cena:'Atún 140–160g + 3 tostadas horneadas + pico de gallo + 60g aguacate'},
+    {desayuno:'Desayuno base fijo', colacion:'2 huevos cocidos + 1 fruta', comida:'170g salmón + 150g arroz + brócoli/calabaza', cena:'150g pollo deshebrado + 3 tortillas + 80g frijol + verduras'},
+    {desayuno:'Desayuno base fijo', colacion:'180–200g cottage + fruta', comida:'170g pollo + 160g pasta + salsa de jitomate + espinaca', cena:'3 huevos + 150g claras + champiñones + 2 tortillas'},
+    {desayuno:'Desayuno base fijo', colacion:'250mL leche + ½ scoop ISO100', comida:'170g res magra + 140g arroz + 100g frijol + verduras', cena:'Atún 140–160g + 250g papa + ensalada + 50g aguacate'},
+    {desayuno:'Oikos Pro + 1 scoop ISO100 + fruta; sin avena', colacion:'180g cottage', comida:'180g fajitas de pollo + pimiento/cebolla + 4 tortillas + 80g frijol', cena:'180g pescado blanco + 250g papa + verduras + 10g aceite'},
+    {desayuno:'3 huevos + 150g claras + 3 tortillas + fruta', colacion:'Fruta si hay hambre', comida:'Comida flexible: 180–200g proteína + arroz/papa o 4 tortillas + verduras', cena:'200g yogurt griego + ½ scoop ISO100 + 30g avena'},
+  ],
+  // Semana 2
+  [
+    {desayuno:'Desayuno base fijo', colacion:'Atún 140g + pepino/limón', comida:'170g pollo + 130g arroz + 80g frijol + verduras + 10g aceite', cena:'2 huevos + 180g claras + 2 tortillas + jitomate'},
+    {desayuno:'Desayuno base fijo', colacion:'150g cottage', comida:'Tinga: 170g pollo + 3 tortillas + ensalada + 50g aguacate', cena:'200g yogurt griego + ½ scoop ISO100 + manzana'},
+    {desayuno:'Desayuno base fijo', colacion:'1 plátano pequeño + 15g nueces', comida:'Bowl: 170g pollo + 130g arroz + 250g verduras', cena:'Atún 140–160g + 3 tortillas + pico de gallo'},
+    {desayuno:'Desayuno base fijo', colacion:'200g yogurt natural alto en proteína', comida:'170g pescado blanco + 180g papa + 100g frijol + verduras', cena:'3 huevos + 150g claras + 2 tortillas'},
+    {desayuno:'3 huevos + 150g claras + 2 tortillas + fruta', colacion:'1 manzana + ½ scoop ISO100', comida:'170g pollo + 130g arroz + verduras + 10g aceite', cena:'Atún + 3 tostadas horneadas + ensalada'},
+    {desayuno:'Desayuno base fijo', colacion:'180g cottage', comida:'170g res magra + 250g papa + ensalada', cena:'2 huevos + 180g claras + verduras + 2 tortillas'},
+    {desayuno:'Oikos Pro + 1 scoop ISO100 + fruta', colacion:'Fruta o yogurt según hambre', comida:'Comida flexible estructurada: 180–200g proteína prioritaria', cena:'150g pollo o atún + ensalada + 2 tortillas'},
+  ],
+  // Semana 3
+  [
+    {desayuno:'Desayuno base con 20g avena', colacion:'Atún 140g', comida:'170g pollo + 110g arroz + 300g verduras + 10g aceite', cena:'3 huevos + 150g claras + jitomate + 2 tortillas'},
+    {desayuno:'3 huevos + 180g claras + fruta', colacion:'Pepino/jícama + limón', comida:'170g pollo + 100g frijol + 3 tortillas + ensalada', cena:'200g yogurt griego + ½ scoop ISO100 + manzana'},
+    {desayuno:'Desayuno base con frutos rojos', colacion:'180g cottage', comida:'170g pescado + 200g papa + 300g verduras', cena:'2 huevos + 180g claras + nopales + 2 tortillas'},
+    {desayuno:'Desayuno base con 20g avena', colacion:'200g yogurt', comida:'170g pollo + 110g arroz + ensalada grande', cena:'Atún 140–160g + 3 tostadas horneadas + jitomate'},
+    {desayuno:'3 huevos + 150g claras + 2 tortillas', colacion:'Gelatina sin azúcar', comida:'170g res magra + 100g frijol + verduras + 2 tortillas', cena:'200g cottage + fruta + ½ scoop ISO100'},
+    {desayuno:'Desayuno base fijo', colacion:'Atún 140g', comida:'180g pollo asado + verduras + 3 tortillas + 50g aguacate', cena:'3 huevos + 150g claras + verduras'},
+    {desayuno:'Oikos Pro + 1 scoop ISO100 + fruta', colacion:'Fruta si hace falta', comida:'Comida social: proteína primero, una porción de carbohidrato', cena:'150–170g pescado/pollo + verduras'},
+  ],
+  // Semana 4
+  [
+    {desayuno:'Desayuno base con 20g avena', colacion:'Atún 140g', comida:'170g pollo + 100g arroz + 300g verduras', cena:'3 huevos + 150g claras + 2 tortillas'},
+    {desayuno:'3 huevos + 180g claras + fruta', colacion:'Manzana', comida:'Tacos: 170g pollo + 3 tortillas + nopales + 50g aguacate', cena:'200g yogurt + ½ scoop ISO100'},
+    {desayuno:'Oikos Pro + 1 scoop ISO100 + frutos rojos', colacion:'Plátano pequeño', comida:'170g pollo + 100g frijol + ensalada grande + 2 tortillas', cena:'Atún + jitomate + 2 tostadas'},
+    {desayuno:'Desayuno base con 20g avena', colacion:'200g yogurt', comida:'170g pescado + 100g arroz + verduras', cena:'3 huevos + 150g claras + salsa'},
+    {desayuno:'3 huevos + 150g claras + 2 tortillas', colacion:'Atún si falta proteína', comida:'Bowl: 170g pollo + 100g frijol + 250g verduras', cena:'200g cottage + fruta + ½ scoop ISO100'},
+    {desayuno:'Desayuno base fijo', colacion:'Manzana o yogurt', comida:'Comida flexible estructurada, sin alcohol', cena:'170g pescado/pollo + verduras'},
+    {desayuno:'Desayuno alto en proteína (huevos o desayuno base)', colacion:'Fruta', comida:'170g pollo + 3 tortillas o 100g frijol + verduras', cena:'Cena ligera: yogurt/cottage + ISO100'},
+  ],
+];
+
+const EXERCISE = [
+  {phase:'🚫 Semana de reposo relativo', note:'La receta indica no realizar actividad física. Prioridad: circulación, movimiento de dedos y proteger la osteosíntesis.', items:[
+    '✅ Caminar dentro de casa cada 1–2 horas (no cardio)',
+    '✅ Abrir/cerrar dedos: 20 reps, 5–8 veces al día',
+    '✅ Separar/juntar dedos: 10–15 reps, 3–5 veces/día',
+    '✅ Elevar la mano y aplicar hielo según receta',
+    '✅ Respiración diafragmática',
+    '🚫 Sentadillas, planchas, bicicleta, saltos',
+    '🚫 Cargar, empujar o jalar con la izquierda',
+  ]},
+  {phase:'⚠️ Solo con autorización médica', note:'Primera revisión médica. Iniciar solo si el cirujano lo autoriza explícitamente.', items:[
+    'Caminata 20–30 min · 5 días/semana (ritmo cómodo)',
+    'Sentarse y levantarse de silla 3×10 (sin usar manos)',
+    'Puente de glúteo 3×12–15',
+    'Elevación de pantorrilla 3×15–20',
+    'Abducción de cadera acostado 3×12–15 por lado',
+    'Extensión de rodilla sentado 3×12–15 por lado',
+    'Respiración + brace abdominal 3×6–8 respiraciones',
+  ]},
+  {phase:'🟢 Progresión (si evolución estable)', note:'Semanas 3–4. Intensidad máxima percibida 6–7/10. Sin entrenar al fallo.', items:[
+    'Caminata 30–45 min · 5–6 días/semana · RPE 4–6/10',
+    'Sentadilla a silla 3×12–15 sin impulso de brazos',
+    'Step-up bajo 3×8–10 por lado',
+    'Split squat asistido 3×8 por lado (solo apoyo derecho)',
+    'Wall sit 3×25–40 seg',
+    'Puente unilateral asistido 3×8 por lado',
+    'Bici fija 10–20 min (opcional, solo si acceso seguro)',
+  ]},
+  {phase:'🟢 Consolidar y preparar rehab', note:'Final del primer mes. No adelantar ejercicios de muñeca aunque baje el dolor.', items:[
+    'Caminata 35–50 min · 5–6 días/semana',
+    'Tren inferior + core 4 días/semana',
+    'Step-up + split squat solo con buen equilibrio',
+    'Intensidad máxima: 6–7/10 · Nunca al fallo',
+    '🚫 No iniciar ROM/fortalecimiento de muñeca sin liberación',
+  ]},
+];
+
+const GROCERY = {
+  'Proteínas y lácteos': [
+    {name:'Oikos Pro 220g', qty:'7 piezas', key:'oikos'},
+    {name:'Pechuga de pollo', qty:'1.4–1.6 kg', key:'pollo'},
+    {name:'Carne magra (res)', qty:'500–600 g', key:'carne'},
+    {name:'Salmón / pescado blanco', qty:'650–750 g', key:'salmon'},
+    {name:'Atún en agua', qty:'5–6 latas', key:'atun'},
+    {name:'Huevo', qty:'18 piezas', key:'huevo'},
+    {name:'Claras pasteurizadas', qty:'900mL–1L', key:'claras'},
+    {name:'Queso cottage', qty:'750–900 g', key:'cottage'},
+    {name:'Yogurt griego natural', qty:'750–900 g', key:'yogurt'},
+    {name:'Leche desc. o alta en proteína', qty:'1–2 L', key:'leche'},
+  ],
+  'Carbohidratos': [
+    {name:'Avena', qty:'500 g', key:'avena'},
+    {name:'Arroz', qty:'1 kg', key:'arroz'},
+    {name:'Papa', qty:'2 kg', key:'papa'},
+    {name:'Pasta', qty:'500 g', key:'pasta'},
+    {name:'Frijol', qty:'500g seco / 1kg cocido', key:'frijol'},
+    {name:'Tortilla de maíz', qty:'30 piezas', key:'tortilla'},
+    {name:'Tostadas horneadas', qty:'1 paquete', key:'tostadas'},
+  ],
+  'Frutas y verduras': [
+    {name:'Manzana', qty:'7 piezas', key:'manzana'},
+    {name:'Plátano', qty:'5 piezas', key:'platano'},
+    {name:'Frutos rojos', qty:'700g–1 kg', key:'frutos'},
+    {name:'Limón', qty:'1 kg', key:'limon'},
+    {name:'Brócoli', qty:'1 kg', key:'brocoli'},
+    {name:'Calabaza', qty:'1 kg', key:'calabaza'},
+    {name:'Nopales', qty:'750 g', key:'nopales'},
+    {name:'Espinaca', qty:'300–500 g', key:'espinaca'},
+    {name:'Pimiento', qty:'4 piezas', key:'pimiento'},
+    {name:'Jitomate / cebolla / champiñón', qty:'Al gusto', key:'jitomate'},
+    {name:'Aguacate', qty:'3 piezas', key:'aguacate'},
+  ],
+  'Grasas y complementos': [
+    {name:'Aceite de oliva', qty:'1 botella pequeña', key:'aceite'},
+    {name:'Chía', qty:'200 g (opcional)', key:'chia'},
+    {name:'Canela / especias', qty:'Al gusto', key:'canela'},
+    {name:'Gelatina sin azúcar', qty:'1 paquete', key:'gelatina'},
+  ],
+};
+
+let currentWeek = 0;
+let currentDay = 0;
+let currentGroceryWeek = 0;
+let groceryState = {};
+let stockState = {};
+let measurements = [];
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.getElementById('bnav-'+v).classList.add('active');
+  if(v==='plan') renderPlan();
+  if(v==='grocery') renderGrocery();
+  if(v==='progress') renderProgress();
+}
+
+function changeWeek(d) {
+  currentWeek = Math.max(0, Math.min(3, currentWeek + d));
+  currentDay = 0;
+  renderPlan();
+}
+function changeWeekGrocery(d) {
+  currentGroceryWeek = Math.max(0, Math.min(3, currentGroceryWeek + d));
+  renderGrocery();
+}
+
+function renderDayStrip() {
+  const strip = document.getElementById('day-strip');
+  strip.innerHTML = DAYS.map((d,i)=>`
+    <div class="day-pill ${i===currentDay?'active':''}" onclick="selectDay(${i})">
+      <span>${d}</span>
+      <span>${getDayNum(i)}</span>
+    </div>
+  `).join('');
+}
+
+function getDayNum(i) {
+  const starts = [15,22,29,6];
+  const start = starts[currentWeek];
+  return start + i;
+}
+
+function selectDay(i) {
+  currentDay = i;
+  renderPlan();
+}
+
+function renderPlan() {
+  const w = WEEKS[currentWeek];
+  document.getElementById('week-label').textContent = w.label;
+  renderDayStrip();
+
+  const day = MENU[currentWeek][currentDay];
+  const ex = EXERCISE[currentWeek];
+
+  const content = document.getElementById('day-content');
+  content.innerHTML = `
+    <div class="phase-tag"><i class="ti ti-target" aria-hidden="true"></i> ${w.phase}</div>
+    <div class="prog-grid" style="margin-bottom:12px">
+      <div class="prog-card"><div class="prog-label">Calorías</div><div class="prog-val" style="font-size:16px">${w.kcal}</div></div>
+      <div class="prog-card"><div class="prog-label">Proteína</div><div class="prog-val" style="font-size:16px">${w.prot}</div></div>
+      <div class="prog-card"><div class="prog-label">Carbs</div><div class="prog-val" style="font-size:16px">${w.carb}</div></div>
+      <div class="prog-card"><div class="prog-label">Grasas</div><div class="prog-val" style="font-size:16px">${w.fat}</div></div>
+    </div>
+
+    <div class="section-title">Comidas del día · ${DAYS[currentDay]} ${getDayNum(currentDay)} ${currentWeek<2?'jun':'jul'}</div>
+    
+    <div class="card">
+      <div class="meal-row">
+        <div class="meal-time">06:00</div>
+        <div>
+          <span class="meal-badge badge-food">Desayuno</span>
+          <span class="meal-badge badge-sup">Meds</span>
+          <div class="meal-text" style="margin-top:4px">${day.desayuno}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="meal-row">
+        <div class="meal-time">10:30</div>
+        <div>
+          <span class="meal-badge badge-food">Colación</span>
+          <div class="meal-text" style="margin-top:4px">${day.colacion}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="meal-row">
+        <div class="meal-time">14:00</div>
+        <div>
+          <span class="meal-badge badge-food">Comida</span>
+          <span class="meal-badge badge-med">Keflex+Tafirol</span>
+          <div class="meal-text" style="margin-top:4px">${day.comida}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="meal-row">
+        <div class="meal-time">22:00</div>
+        <div>
+          <span class="meal-badge badge-food">Cena</span>
+          <span class="meal-badge badge-med">Meds noche</span>
+          <div class="meal-text" style="margin-top:4px">${day.cena}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:16px">Ejercicio · ${ex.phase}</div>
+    <div class="card">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:8px">${ex.note}</div>
+      ${ex.items.map(item=>`<div style="font-size:14px;padding:5px 0;border-bottom:0.5px solid var(--border);color:var(--text)">${item}</div>`).join('')}
+    </div>
+
+    <div class="section-title" style="margin-top:16px">Desayuno base (referencia)</div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px">
+        <div style="color:var(--text2)">Oikos Pro</div><div>220g</div>
+        <div style="color:var(--text2)">ISO100 vainilla</div><div>½ scoop</div>
+        <div style="color:var(--text2)">Avena</div><div>30g seco</div>
+        <div style="color:var(--text2)">Fruta</div><div>½ plátano o 100g frutos rojos</div>
+        <div style="color:var(--text2)">Creatina</div><div>5g</div>
+        <div style="color:var(--text2)">Canela / agua</div><div>Al gusto</div>
+      </div>
+      <div style="margin-top:10px;background:var(--teal-l);border-radius:var(--r);padding:8px 10px;font-size:13px;color:var(--teal)">
+        <strong>~360–420 kcal · 35–45g proteína</strong>
+      </div>
+    </div>
+  `;
+}
+
+function renderGrocery() {
+  const wnames = ['Semana 1','Semana 2','Semana 3','Semana 4'];
+  document.getElementById('grocery-week-label').textContent = `Súper · ${wnames[currentGroceryWeek]}`;
+  document.querySelector('.phase-tag').textContent = `${wnames[currentGroceryWeek]} · ${WEEKS[currentGroceryWeek].range}`;
+
+  loadFromStorage();
+  const list = document.getElementById('grocery-list');
+  let html = '';
+  for(const [cat, items] of Object.entries(GROCERY)) {
+    html += `<div class="grocery-cat">${cat}</div>`;
+    for(const item of items) {
+      const key = `g_${currentGroceryWeek}_${item.key}`;
+      const checked = groceryState[key] || false;
+      const low = stockState[item.key] || false;
+      html += `<div class="grocery-item">
+        <input type="checkbox" id="cb_${key}" ${checked?'checked':''} onchange="toggleGrocery('${key}')">
+        <label for="cb_${key}" class="grocery-name ${checked?'checked':''}">${item.name}</label>
+        <span class="grocery-qty">${item.qty}</span>
+        <button class="stock-btn ${low?'ok':''}" onclick="toggleLow('${item.key}', this)" title="${low?'Stock OK':'Marcar como bajo'}">
+          ${low?'OK':'⚠️'}
+        </button>
+      </div>`;
+    }
+  }
+  list.innerHTML = html;
+}
+
+function toggleGrocery(key) {
+  loadFromStorage();
+  groceryState[key] = !groceryState[key];
+  saveToStorage();
+  renderGrocery();
+  showToast(groceryState[key] ? '✅ Marcado como comprado' : 'Desmarcado');
+}
+
+function toggleLow(key, btn) {
+  loadFromStorage();
+  stockState[key] = !stockState[key];
+  saveToStorage();
+  btn.textContent = stockState[key] ? 'OK' : '⚠️';
+  btn.className = 'stock-btn' + (stockState[key] ? ' ok' : '');
+  showToast(stockState[key] ? '✅ Stock OK' : '⚠️ Marcado como bajo');
+}
+
+function clearGrocery() {
+  loadFromStorage();
+  for(const cat of Object.values(GROCERY)) {
+    for(const item of cat) {
+      const key = `g_${currentGroceryWeek}_${item.key}`;
+      groceryState[key] = false;
+    }
+  }
+  saveToStorage();
+  renderGrocery();
+  showToast('Lista limpiada');
+}
+
+function markLow() {
+  loadFromStorage();
+  const lows = Object.entries(stockState).filter(([k,v])=>v).map(([k])=>{
+    for(const items of Object.values(GROCERY)) {
+      const found = items.find(i=>i.key===k);
+      if(found) return found.name;
+    }
+    return k;
+  });
+  if(lows.length===0) showToast('Nada marcado como bajo');
+  else showToast('Bajo: ' + lows.join(', ').substring(0,60));
+}
+
+function saveMeasurement() {
+  const w = parseInt(document.getElementById('meas-week').value);
+  const peso = parseFloat(document.getElementById('meas-peso').value);
+  const cintura = parseFloat(document.getElementById('meas-cintura').value);
+  const abdomen = parseFloat(document.getElementById('meas-abdomen').value);
+  const dolor = parseInt(document.getElementById('meas-dolor').value) || 0;
+  const notas = document.getElementById('meas-notas').value;
+
+  if(isNaN(peso) && isNaN(cintura) && isNaN(abdomen)) { showToast('Agrega al menos una medida'); return; }
+
+  loadFromStorage();
+  measurements = measurements.filter(m=>m.week!==w);
+  measurements.push({week:w, peso, cintura, abdomen, dolor, notas, date:new Date().toLocaleDateString('es-MX')});
+  measurements.sort((a,b)=>a.week-b.week);
+  saveToStorage();
+
+  document.getElementById('meas-peso').value = '';
+  document.getElementById('meas-cintura').value = '';
+  document.getElementById('meas-abdomen').value = '';
+  document.getElementById('meas-dolor').value = '';
+  document.getElementById('meas-notas').value = '';
+
+  showToast('✅ Medición guardada');
+  renderProgress();
+}
+
+const WEEK_NAMES = ['21 jun','28 jun','5 jul','12 jul'];
+
+function renderProgress() {
+  loadFromStorage();
+  const hist = document.getElementById('meas-history');
+  if(measurements.length===0) {
+    hist.innerHTML = '<div style="color:var(--text3);font-size:14px;text-align:center;padding:20px">Sin registros aún · Agrega tu primera medición del domingo</div>';
+  } else {
+    const basePeso = 73.95, baseCin = 93.2, baseAbd = 97.3;
+    let rows = '';
+    for(const m of measurements) {
+      const dp = isNaN(m.peso) ? '–' : (m.peso - basePeso).toFixed(1);
+      const dc = isNaN(m.cintura) ? '–' : (m.cintura - baseCin).toFixed(1);
+      const da = isNaN(m.abdomen) ? '–' : (m.abdomen - baseAbd).toFixed(1);
+      const dpClass = parseFloat(dp)<0 ? 'prog-down' : 'prog-up';
+      rows += `<tr>
+        <td>${WEEK_NAMES[m.week]}</td>
+        <td>${isNaN(m.peso)?'–':m.peso.toFixed(1)} <span class="${dpClass}" style="font-size:11px">(${dp>0?'+':''}${dp})</span></td>
+        <td>${isNaN(m.abdomen)?'–':m.abdomen.toFixed(1)}</td>
+        <td>${m.dolor}/10</td>
+      </tr>`;
+    }
+    hist.innerHTML = `<div class="card" style="overflow-x:auto">
+      <table class="prog-table">
+        <thead><tr><th>Fecha</th><th>Peso kg</th><th>Abd cm</th><th>Dolor</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      ${measurements[measurements.length-1].notas ? `<div style="font-size:13px;color:var(--text2);margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border)">Última nota: ${measurements[measurements.length-1].notas}</div>` : ''}
+    </div>`;
+  }
+  renderChart();
+}
+
+function renderChart() {
+  const svg = document.getElementById('weight-chart');
+  const allData = [{week:-1, peso:73.95},...measurements.filter(m=>!isNaN(m.peso))];
+  if(allData.length<2){
+    svg.innerHTML = '<text x="160" y="70" text-anchor="middle" font-size="13" fill="var(--text3)">Agrega mediciones para ver la gráfica</text>';
+    return;
+  }
+  const W=320, H=140, pad=36;
+  const vals = allData.map(d=>d.peso);
+  const min = Math.min(...vals)-0.5, max = Math.max(...vals)+0.5;
+  const xScale = i => pad + (i/(allData.length-1))*(W-pad*2);
+  const yScale = v => pad + (1-(v-min)/(max-min))*(H-pad*1.5);
+  let path = allData.map((d,i)=>`${i===0?'M':'L'}${xScale(i).toFixed(1)},${yScale(d.peso).toFixed(1)}`).join(' ');
+  let dots = allData.map((d,i)=>`<circle cx="${xScale(i).toFixed(1)}" cy="${yScale(d.peso).toFixed(1)}" r="4" fill="var(--teal)"/>
+    <text x="${xScale(i).toFixed(1)}" y="${(yScale(d.peso)-8).toFixed(1)}" text-anchor="middle" font-size="10" fill="var(--text2)">${d.peso.toFixed(1)}</text>`).join('');
+  const xLabels = allData.map((d,i)=>`<text x="${xScale(i).toFixed(1)}" y="${H-4}" text-anchor="middle" font-size="10" fill="var(--text3)">${d.week===-1?'Base':WEEK_NAMES[d.week]}</text>`).join('');
+  svg.innerHTML = `<path d="${path}" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round"/>
+    ${dots}${xLabels}
+    <line x1="${pad}" y1="${yScale(73.95).toFixed(1)}" x2="${W-pad}" y2="${yScale(73.95).toFixed(1)}" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="4,3"/>`;
+}
+
+function saveToStorage() {
+  try {
+    localStorage.setItem('hugo_grocery', JSON.stringify(groceryState));
+    localStorage.setItem('hugo_stock', JSON.stringify(stockState));
+    localStorage.setItem('hugo_meas', JSON.stringify(measurements));
+  } catch(e) {}
+}
+
+function loadFromStorage() {
+  try {
+    const g = localStorage.getItem('hugo_grocery');
+    const s = localStorage.getItem('hugo_stock');
+    const m = localStorage.getItem('hugo_meas');
+    if(g) groceryState = JSON.parse(g);
+    if(s) stockState = JSON.parse(s);
+    if(m) measurements = JSON.parse(m);
+  } catch(e) {}
+}
+
+loadFromStorage();
+renderPlan();
+</script>
+</body>
+</html>
